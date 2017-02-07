@@ -29,7 +29,7 @@ public class TopologicalOrdering {
         print("computedOrdering: ");
         System.out.println(printArray(computedOrdering));
 
-        assert Arrays.equals(topologicalSortVariant2(dag), ordering1) || Arrays.equals(topologicalSortVariant2(dag), ordering2);
+        assert Arrays.equals(computedOrdering, ordering1) || Arrays.equals(computedOrdering, ordering2);
     }
 
     /**
