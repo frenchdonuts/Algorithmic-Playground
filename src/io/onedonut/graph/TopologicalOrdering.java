@@ -56,7 +56,7 @@ public class TopologicalOrdering {
      * This variant of topological sort constructs the ordering "forwards".
      * That is, we start with a source of the DAG, label it, delete it, and recurse.
      * A source is a node with no incoming edges.
-     * Seen in Kleinberg and Tardos' Algorithms Design textbook.
+     * Seen in Kleinberg and Tardos' Algorithms Design textbook (p. 101-104).
      * @param dag
      */
     Node[] topologicalSortVariant2(Node[] dag) {
