@@ -21,15 +21,18 @@ public class TopologicalOrdering {
     Node[] dag = new Node[] { n1, n2, n3, n4, n5, n6, n7 };
     Node[] ordering1 = dag;
     Node[] ordering2 = new Node[] { n2, n1, n3, n4, n5, n6, n7 };
+    Node[] ordering3 = new Node[] { n2, n3, n1, n4, n5, n6, n7 };
 
     public void test() {
         //
-        Node[] computedOrdering = topologicalSortVariant2(dag);
+        Node[] computedOrdering = topologicalSortVariant1(dag);
 
         print("computedOrdering: ");
         System.out.println(printArray(computedOrdering));
 
-        assert Arrays.equals(computedOrdering, ordering1) || Arrays.equals(computedOrdering, ordering2);
+        assert Arrays.equals(computedOrdering, ordering1)
+                || Arrays.equals(computedOrdering, ordering2)
+                || Arrays.equals(computedOrdering, ordering3);
     }
 
     /**
@@ -48,8 +51,54 @@ public class TopologicalOrdering {
      * Seen in Tim's Coursera course.
      * @param dag
      */
-    void topologicalSortVariant1(Node[] dag) {
+    Node[] topologicalSortVariant1(Node[] dag) {
         //
+        Node[] ordering = new Node[dag.length];
+        int currentIndex = dag.length - 1;
+        int[] nodeToOutgoingEdgesMap = mapNodesToOutgoingEdges(dag);
+
+        LinkedList<Integer> activeSinks = findSinks(nodeToOutgoingEdgesMap);
+        while (!activeSinks.isEmpty()) {
+            Node sink = dag[activeSinks.remove()];
+            // Add sink to ordering
+            ordering[currentIndex] = sink;
+            currentIndex--;
+            // Remove sink from graph by subtracting the number of outgoing edges
+            // from all nodes that point to this sink
+            // How would I efficiently find all the nodes that point to this sink?
+            for (int i = 0; i < dag.length; i++) {
+                if (dag[i].neighbors.contains(sink)) {
+                    int edges = nodeToOutgoingEdgesMap[i];
+                    nodeToOutgoingEdgesMap[i] = edges - 1;
+                    if (edges == 1) {
+                        activeSinks.add(i);
+                    }
+                }
+            }
+        }
+
+        return ordering;
+    }
+
+    int[] mapNodesToOutgoingEdges(Node[] dag) {
+        int[] res = new int[dag.length];
+
+        for (int i = 0; i < dag.length; i++) {
+            res[i] = dag[i].neighbors.size();
+        }
+
+        return res;
+    }
+
+    LinkedList<Integer> findSinks(int[] nodesToOutgoingEdgesMap) {
+        LinkedList<Integer> res = new LinkedList<>();
+
+        for (int i = 0; i < nodesToOutgoingEdgesMap.length; i++) {
+            if (nodesToOutgoingEdgesMap[i] == 0)
+                res.add(i);
+        }
+
+        return res;
     }
 
     /**
