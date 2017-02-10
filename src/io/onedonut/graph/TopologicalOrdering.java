@@ -25,7 +25,7 @@ public class TopologicalOrdering {
 
     public void test() {
         //
-        Node[] computedOrdering = topologicalSortVariant1(dag);
+        Node[] computedOrdering = topologicalSortVariant0(dag);
 
         print("computedOrdering: ");
         System.out.println(printArray(computedOrdering));
@@ -40,8 +40,30 @@ public class TopologicalOrdering {
      * It is both efficient and slick. Seen in Tim's Coursera course.
      * @param dag
      */
-    void topologicalSortVariant0(Node[] dag) {
-        //
+    Node[] topologicalSortVariant0(Node[] dag) {
+        Node[] ordering = new Node[dag.length];
+        Set<Node> explored = new HashSet<>();
+        int index = dag.length - 1;
+
+        for(Node n : dag) {
+            if (!explored.contains(n))
+                index = dfs(n, explored, index, ordering);
+        }
+        return ordering;
+    }
+
+    int dfs(Node s, Set<Node> explored, int index, Node[] ordering) {
+        explored.add(s);
+
+        for (Node n : s.neighbors) {
+            if (!explored.contains(n)) {
+                index = dfs(n, explored, index, ordering);
+            }
+        }
+        ordering[index] = s;
+
+        index--;
+        return index;
     }
 
     /**
@@ -65,7 +87,7 @@ public class TopologicalOrdering {
             currentIndex--;
             // Remove sink from graph by subtracting the number of outgoing edges
             // from all nodes that point to this sink
-            // How would I efficiently find all the nodes that point to this sink?
+            // TODO: How would I efficiently find all the nodes that point to this sink?
             for (int i = 0; i < dag.length; i++) {
                 if (dag[i].neighbors.contains(sink)) {
                     int edges = nodeToOutgoingEdgesMap[i];
