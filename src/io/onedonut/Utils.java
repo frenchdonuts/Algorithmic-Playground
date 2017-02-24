@@ -19,16 +19,18 @@ public class Utils {
     }
 
     public static String printIterable(Iterable A) {
-        String res = "[";
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("[");
         for (Object o : A) {
-            res = res + o.toString() + ", ";
+            builder.append(o.toString() + ", ");
         }
 
-        res = res.substring(0, res.lastIndexOf(','));
+        builder.deleteCharAt(builder.lastIndexOf(","));
 
-        res = res + "]";
+        builder.append("]");
 
-        return res;
+        return builder.toString();
     }
 
     public static void print(String s) {
