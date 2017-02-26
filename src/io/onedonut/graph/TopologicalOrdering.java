@@ -25,7 +25,7 @@ public class TopologicalOrdering {
 
     public void test() {
         //
-        Node[] computedOrdering = topologicalSortVariant0(dag);
+        Node[] computedOrdering = topologicalSort(dag);
 
         print("computedOrdering: ");
         System.out.println(printArray(computedOrdering));
@@ -33,6 +33,38 @@ public class TopologicalOrdering {
         assert Arrays.equals(computedOrdering, ordering1)
                 || Arrays.equals(computedOrdering, ordering2)
                 || Arrays.equals(computedOrdering, ordering3);
+    }
+
+    /**
+     * This variant of topological sort is a modification of iterative depth-first search.
+     * It is both efficient and slick. Seen in Tim's Coursera course.
+     * @param dag
+     * @return
+     */
+    Node[] topologicalSort(Node[] dag) {
+        Node[] ordering = new Node[dag.length];
+        int label = dag.length - 1;
+        Set<Node> explored = new HashSet<>(dag.length);
+        LinkedList<Node> stack = new LinkedList<>();
+
+        for (Node s : dag) {
+            if (!explored.contains(s)) {
+                stack.push(s);
+                while(!stack.isEmpty()) {
+                    Node curNode = stack.peek();
+                    if (!explored.contains(curNode)) {
+                        for (Node n : curNode.neighbors) {
+                            if (!explored.contains(n))
+                                stack.push(n);
+                        }
+                        explored.add(curNode);
+                    } else
+                        ordering[label--] = stack.pop();
+                }
+            }
+        }
+
+        return ordering;
     }
 
     /**
